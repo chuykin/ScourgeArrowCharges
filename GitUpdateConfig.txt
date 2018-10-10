@@ -1,0 +1,8 @@
+Owner: IncubusX
+Name: ScourgeArrowCharges
+Repository
+
+Ignore:
+src
+.gitignore
+README.md
