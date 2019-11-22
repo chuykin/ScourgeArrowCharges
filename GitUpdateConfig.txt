@@ -1,8 +1,3 @@
-Owner: IncubusX
+Owner: IlliumIv
 Name: ScourgeArrowCharges
-Repository
-
-Ignore:
-src
-.gitignore
-README.md
+Release
