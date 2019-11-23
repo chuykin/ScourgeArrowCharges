@@ -1,21 +1,34 @@
 ﻿using System;
 using System.Collections;
 using System.Runtime.InteropServices;
-using PoeHUD.Framework;
-using PoeHUD.Framework.Helpers;
-using PoeHUD.Plugins;
-using PoeHUD.Poe.Components;
+using ExileCore;
+using ExileCore.PoEMemory.Components;
+using ExileCore.Shared;
 using static ScourgeArrowCharges.WinApiMouse;
 
 namespace ScourgeArrowCharges
 {
-    public class ScourgeArrowCharges : BaseSettingsPlugin<ScourgeArrowChargesSettings>
+    public class ScourgeArrowChargesCore : BaseSettingsPlugin<ScourgeArrowChargesSettings>
     {
-        private Coroutine _mainWork;
-        public override void Initialise()
+        private Coroutine _mainWork { get; set; }
+        public override bool Initialise()
         {
-            _mainWork = (new Coroutine(RealeaseCharge(), nameof(ScourgeArrowCharges), "ScourgeArrow Realease"))
-                .AutoRestart(GameController.CoroutineRunnerParallel).RunParallel();
+            Name = "ScourgeArrowCharges";
+
+            _mainWork = new Coroutine(() => RealeaseCharge(), new WaitTime(Settings.TimeCheckCharges), this, "ScourgeArrow Realease");
+            Core.ParallelRunner.Run(_mainWork);
+
+            Settings.TimeCheckCharges.OnValueChanged += (sender, b) =>
+            {
+                UpdateCoroutineWaitRender();
+            };
+
+            return base.Initialise();
+        }
+
+        private void UpdateCoroutineWaitRender()
+        {
+            _mainWork.UpdateCondtion(new WaitTime(Settings.TimeCheckCharges));
         }
 
         IEnumerator RealeaseCharge()
